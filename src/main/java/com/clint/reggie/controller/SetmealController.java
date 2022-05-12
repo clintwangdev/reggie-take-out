@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -86,6 +88,10 @@ public class SetmealController {
      * 添加套餐及其菜品信息
      */
     @PostMapping
+    @CacheEvict(
+            value = "setmealCache",
+            allEntries = true
+    )
     public R<String> save(@RequestBody SetmealDto setmealDto) {
         log.info(setmealDto.toString());
 
@@ -108,6 +114,10 @@ public class SetmealController {
      * 修改套餐信息
      */
     @PutMapping
+    @CacheEvict(
+            value = "setmealCache",
+            allEntries = true
+    )
     public R<String> update(@RequestBody SetmealDto setmealDto) {
         log.info(setmealDto.toString());
 
@@ -120,6 +130,10 @@ public class SetmealController {
      * 批量‘停售’/‘启售’ 套餐
      */
     @PostMapping("/status/{status}")
+    @CacheEvict(
+            value = "setmealCache",
+            allEntries = true
+    )
     public R<String> updateStatus(@PathVariable Integer status, Long[] ids) {
         List<Setmeal> setmeals = new LinkedList<>();
         for (Long id : ids) {
@@ -137,6 +151,10 @@ public class SetmealController {
      * 批量删除套餐
      */
     @DeleteMapping
+    @CacheEvict(
+            value = "setmealCache",
+            allEntries = true
+    )
     public R<String> remove(Long[] ids) {
         setmealService.removeWithSetmealDish(ids);
 
@@ -147,6 +165,11 @@ public class SetmealController {
      * 根据套餐分类 ID 获取套餐
      */
     @GetMapping("/list")
+    @Cacheable(
+            value = "setmealCache",
+            key = "#setmeal.categoryId + '_' + #setmeal.status",
+            unless = "#result.data.empty"
+    )
     public R<List<Setmeal>> list(Setmeal setmeal) {
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Setmeal::getCategoryId, setmeal.getCategoryId());

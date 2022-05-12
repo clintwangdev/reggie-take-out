@@ -185,8 +185,8 @@ public class DishController {
         }
         // 没有缓存数据
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Dish::getCategoryId, categoryId);
-        queryWrapper.eq(Dish::getStatus, status);
+        queryWrapper.eq(categoryId != null, Dish::getCategoryId, categoryId);
+        queryWrapper.eq(status != null, Dish::getStatus, status);
 
         List<Dish> dishList = dishService.list(queryWrapper);
 
