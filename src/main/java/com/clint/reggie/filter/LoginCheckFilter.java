@@ -54,7 +54,7 @@ public class LoginCheckFilter implements Filter {
             return;
         }
 
-         // 如果是其它请求，判断是否登录
+        // 如果是其它请求，判断是否登录
         if (request.getSession().getAttribute("user") != null) {
             log.info("登录用户名: {}", ((User) request.getSession().getAttribute("user")).getPhone());
             // 保存当前登录用户 ID
@@ -76,7 +76,11 @@ public class LoginCheckFilter implements Filter {
                 "/front/**",
                 "/common/**",
                 "/user/sendMsg",
-                "/user/login"
+                "/user/login",
+                "/doc.html",
+                "/webjars/**",
+                "/swagger-resources",
+                "/v2/api-docs"
         };
 
         for (String uri : uris) {

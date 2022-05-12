@@ -12,6 +12,8 @@ import com.clint.reggie.service.CategoryService;
 import com.clint.reggie.service.DishService;
 import com.clint.reggie.service.SetmealDishService;
 import com.clint.reggie.service.SetmealService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/setmeal")
 @Slf4j
+@Api(tags = "套餐相关接口")
 public class SetmealController {
 
     @Autowired
@@ -46,6 +49,7 @@ public class SetmealController {
      * 根据套餐名分页查询套餐
      */
     @GetMapping("/page")
+    @ApiOperation("分页查询套餐接口")
     public R<Page<SetmealDto>> page(PageDto pageDto) {
         log.info(pageDto.toString());
 
@@ -92,6 +96,7 @@ public class SetmealController {
             value = "setmealCache",
             allEntries = true
     )
+    @ApiOperation("新增套餐接口")
     public R<String> save(@RequestBody SetmealDto setmealDto) {
         log.info(setmealDto.toString());
 
@@ -104,6 +109,7 @@ public class SetmealController {
      * 回显套餐信息
      */
     @GetMapping("/{id}")
+    @ApiOperation("回显套餐信息")
     public R<SetmealDto> getByIdWithSetmealDish(@PathVariable Long id) {
         SetmealDto setmealDto = setmealService.getByIdWithSetmealDish(id);
 
@@ -118,6 +124,7 @@ public class SetmealController {
             value = "setmealCache",
             allEntries = true
     )
+    @ApiOperation("修改套餐信息")
     public R<String> update(@RequestBody SetmealDto setmealDto) {
         log.info(setmealDto.toString());
 
@@ -134,6 +141,7 @@ public class SetmealController {
             value = "setmealCache",
             allEntries = true
     )
+    @ApiOperation("批量修改套餐状态")
     public R<String> updateStatus(@PathVariable Integer status, Long[] ids) {
         List<Setmeal> setmeals = new LinkedList<>();
         for (Long id : ids) {
@@ -155,6 +163,7 @@ public class SetmealController {
             value = "setmealCache",
             allEntries = true
     )
+    @ApiOperation("批量删除套餐")
     public R<String> remove(Long[] ids) {
         setmealService.removeWithSetmealDish(ids);
 
@@ -170,6 +179,7 @@ public class SetmealController {
             key = "#setmeal.categoryId + '_' + #setmeal.status",
             unless = "#result.data.empty"
     )
+    @ApiOperation("根据套餐ID获取套餐")
     public R<List<Setmeal>> list(Setmeal setmeal) {
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Setmeal::getCategoryId, setmeal.getCategoryId());
@@ -185,6 +195,7 @@ public class SetmealController {
      * 根据套餐 ID 获取对应的菜品
      */
     @GetMapping("/dish/{id}")
+    @ApiOperation("根据套餐ID获取对应菜品")
     public R<List<Dish>> dish(@PathVariable Long id) {
         LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SetmealDish::getSetmealId, id);
